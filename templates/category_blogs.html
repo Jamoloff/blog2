@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+    <h1>{{ category.name }} page</h1>
+    {% for blog in blogs %}
+        <div class="card mb-3">
+            <img src="{{ blog.image.url }}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{ blog.title }}</h5>
+                <p class="card-text">{{ blog.description|truncatechars:100 | safe }}</p>
+                <p class="card-text"><small class="text-muted">{{ blog.created }}</small></p>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
