@@ -3,15 +3,19 @@
 {% block title %} Home {% endblock %}
 
 {% block content %}
-    <h1>{{ category.name }} page</h1>
+   <h1>{{ category.name }} page</h1>
+    <hr>
     {% for blog in blogs %}
-        <div class="card mb-3">
-            <img src="{{ blog.image.url }}" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">{{ blog.title }}</h5>
-                <p class="card-text">{{ blog.description|truncatechars:100 | safe }}</p>
-                <p class="card-text"><small class="text-muted">{{ blog.created }}</small></p>
-            </div>
-        </div>
+        <h3><a href="#">{{ blog.title }}</a></h3>
+        <p><a href="#">{{ blog.category.name }}</a>
+            Sana: {{ blog.created | date:'Y-m-d // h:i' }}</p>
+        <img style="width: 400px;" src="{{ blog.image.url }}" alt="Bu rasm">
+        <p>{{ blog.description|truncatechars_html:100|safe }}</p>
+        <p>User: {{ blog.user.username }}</p>
+        <p>Ko'rishlar soni: {{ blog.views }}</p>
+        {% for tag in blog.tags.all %}
+            <a href="#">#{{ tag.name }} </a>
+        {% endfor %}
+        <hr>
     {% endfor %}
 {% endblock %}
