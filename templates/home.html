@@ -6,7 +6,7 @@
    <h1>Home page</h1>
     <hr>
     {% for blog in blogs %}
-        <h3><a href="#">{{ blog.title }}</a></h3>
+        <h3><a href="{% url 'blog' blog.slug %}">{{ blog.title }}</a></h3>
         <p><a href="#">{{ blog.category.name }}</a>
             Sana: {{ blog.created | date:'Y-m-d // h:i' }}</p>
         <img style="width: 400px;" src="{{ blog.image.url }}" alt="Bu rasm">

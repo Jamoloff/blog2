@@ -3,7 +3,11 @@
 {% block title %} Home {% endblock %}
 
 {% block content %}
-   <h1>{{ category.name }} page</h1>
+    {% if category %}
+        <h1>{{ category.name }} page</h1>
+    {% else %}
+        <h1>{{ tag.name }} page</h1>
+    {% endif %}
     <hr>
     {% for blog in blogs %}
         <h3><a href="#">{{ blog.title }}</a></h3>

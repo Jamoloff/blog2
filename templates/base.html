@@ -27,7 +27,7 @@
         <h1>Tags All</h1>
             <hr>
             {% for tag in tags %}
-                <a href="#">#{{ tag.name }} </a>
+                <a href="{% url 'tag_blog' tag.slug %}">#{{ tag.name }} </a>
             {% endfor %}
         </div>
     </div>
