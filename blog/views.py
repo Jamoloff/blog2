@@ -89,10 +89,12 @@ class BlogDetail(BasicView, View):
 
     def post(self, request, slug):
         form = CommentForm(request.POST)
-        blog = Blog.objects.get(slug=slug)
+        # blog = Blog.objects.get(slug=slug)
         if form.is_valid():
             form_comment = form.save(commit=False)
-            form_comment.blog = blog
+            form_comment.blog = self.get().blog
             form_comment.user = request.user
             form_comment.save()
-            return redirect('blog', blog.slug)
+            return redirect('blog', self.get().blog.slug)
+
+
