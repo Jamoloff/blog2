@@ -11,6 +11,12 @@ class BlogForm(forms.ModelForm):
         fields = ['title', 'description', 'image', 'category']
 
 
+class BlogUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Blog
+        fields = ['title', 'description', 'image', 'category']
+
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment

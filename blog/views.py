@@ -3,7 +3,7 @@ from django.template.defaultfilters import slugify
 from django.views import View
 
 from .models import Blog, Category, Tag
-from .forms import BlogForm, CommentForm
+from .forms import BlogForm, CommentForm, BlogUpdateForm
 
 
 class BasicView:
@@ -61,6 +61,35 @@ class BlogCreate(BasicView, View):
             return redirect('home')
 
 
+class BlogUpdate(View):
+    def get(self, request, slug):
+        blog = Blog.objects.get(slug=slug)
+        str1 = ''
+        for tag in blog.tags.all():
+            str1 += str(tag)
+            str1 += ','
+        context = {}
+        context['form'] = BlogUpdateForm(instance=blog)
+        context['str1'] = str1
+        return render(request, 'blog_update.html', context)
+
+    def post(self, request, slug):
+        blog = Blog.objects.get(slug=slug)
+        form = BlogUpdateForm(request.POST, request.FILES, instance=blog)
+        if form.is_valid():
+            form_create = form.save(commit=False)
+            form_create.slug = slugify(form_create.title)
+            form_create.user = request.user
+            form_create.save()
+            blog = Blog.objects.get(id=form_create.id)
+            tags = request.POST['tags'].split(',')
+            for tag in tags:
+                if tag != '':
+                    tag, created = Tag.objects.get_or_create(name=tag.strip())
+                    blog.tags.add(tag)
+            return redirect('blog', blog.slug)
+
+
 class TagBlog(BasicView, View):
     def get(self, request, slug):
         context = {}
@@ -89,12 +118,10 @@ class BlogDetail(BasicView, View):
 
     def post(self, request, slug):
         form = CommentForm(request.POST)
-        # blog = Blog.objects.get(slug=slug)
+        blog = Blog.objects.get(slug=slug)
         if form.is_valid():
             form_comment = form.save(commit=False)
-            form_comment.blog = self.get().blog
+            form_comment.blog = blog
             form_comment.user = request.user
             form_comment.save()
-            return redirect('blog', self.get().blog.slug)
-
-
+            return redirect('blog', blog.slug)
