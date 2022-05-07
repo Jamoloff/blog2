@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
 from django.template.defaultfilters import slugify
+from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic import DeleteView, ListView
 
+from user.models import UserProfile
 from .models import Blog, Category, Tag
 from .forms import BlogForm, CommentForm, BlogUpdateForm
 
@@ -83,6 +86,9 @@ class BlogUpdate(View):
             form_create.save()
             blog = Blog.objects.get(id=form_create.id)
             tags = request.POST['tags'].split(',')
+            for tag in blog.tags.all():
+                if tag not in tags:
+                    blog.tags.remove(tag)
             for tag in tags:
                 if tag != '':
                     tag, created = Tag.objects.get_or_create(name=tag.strip())
@@ -125,3 +131,33 @@ class BlogDetail(BasicView, View):
             form_comment.user = request.user
             form_comment.save()
             return redirect('blog', blog.slug)
+
+
+class BlogDelete(DeleteView):
+    model = Blog
+    success_url = reverse_lazy('home')
+    template_name = 'blog_delete.html'
+
+
+class CategoryList(ListView, BasicView):
+    model = Category
+    context_object_name = 'category_list'
+    template_name = 'category_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = self.category()
+        context['tags'] = self.tag()
+        return context
+
+
+class CategoryAddUser(View):
+    def get(self, request, slug):
+        user = UserProfile.objects.get(username=request.user.username)
+        category = Category.objects.get(slug=slug)
+        if category.user.filter(username=request.user.username).exists():
+            category.user.remove(user)
+            return redirect('category_list')
+        else:
+            category.user.add(user)
+            return redirect('category_list')

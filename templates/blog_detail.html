@@ -17,6 +17,7 @@
     {% endfor %}
     <hr>
     <a href="{% url 'update' blog.slug %}" class="btn btn-success">Update</a>
+    <a href="{% url 'delete' blog.id %}" class="btn btn-danger">Delete</a>
     <hr>
     <div class="row">
         <div class="product col-lg-6">
